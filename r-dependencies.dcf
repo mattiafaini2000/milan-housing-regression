@@ -1,0 +1,5 @@
+Core: MASS, quantreg
+Optional-Tree-Models: xgboost, ranger, catboost
+Optional-Tuning: mlr, mlrMBO, ParamHelpers
+Archived-Experiments: rqPen, ggmap, tidygeocoder
+Report-Build: PowerShell, MiKTeX pdflatex, pdfimages

@@ -1,0 +1,5 @@
+sqm_price ~ bathrooms_number + rooms_number + square_meters + sqm_1 +
+  year_of_construction + new + total_floors_in_building + garage_box +
+  shared_parking + availability + floor + ground + basement + mezzanine +
+  ratio + energy_efficiency_class + lift + floor_lift + condominium_fees +
+  conditions + heating_centralized + main_zone
