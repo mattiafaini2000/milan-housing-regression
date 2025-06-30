@@ -2,7 +2,7 @@
 
 Mattia Faini's Milan Housing project studies property selling-price prediction from housing characteristics and neighbourhood information.
 
-Read the complete [English report](milan_housing_report_en.pdf). It retains the historical figures and results. Figure lettering remains Italian, with English keys immediately below each figure; standalone image files are not included.
+Read the complete [English report](milan_housing_report_en.pdf).
 
 ## Report summary
 
