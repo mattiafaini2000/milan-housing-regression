@@ -56,6 +56,6 @@ The optional mlr/mlrMBO functions use two-fold CV and 30 MBO iterations. XGBoost
 
 ## Available material
 
-The Italian PDF and full English translation contain the original three figures. The report build extracts their artwork locally from the Italian PDF; the two JPEGs are byte-identical to the supplied figure files, and the map pixels are unchanged. Italian figure lettering is retained with English keys. No standalone images are published.
+The English report contains the original three figures. Italian figure lettering is retained with English keys, and the artwork is unchanged. The PDF is published in the repository root; no standalone images are published.
 
 Raw training/test listings, historical split indices, complete selection traces, the selected model specification, the original Google API project and QGIS resources are unavailable. The local `submission_faini.csv` has 4800 `ID,prediction` rows, not ground-truth prices. The saved `rq_bechmark.RData` is preserved locally and was not loaded or assumed to be the selected model.

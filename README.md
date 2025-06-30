@@ -1,18 +1,24 @@
 # Milan Housing Regression
 
-Mattia Faini's Milan Housing project studies property selling-price prediction using data cleaning, fitted imputation, engineered housing features and median quantile regression. The model fits `log(selling_price / square_meters)` and converts predictions back to selling prices with `exp(prediction) * square_meters`. Model selection and evaluation use absolute errors on that price scale.
+Mattia Faini's Milan Housing project studies property selling-price prediction from housing characteristics and neighbourhood information.
 
-Read the complete [English report](report/milan_housing_report_en.pdf) or the [original Italian report](report/report_faini.pdf). The English report retains the historical figures and results. Figure lettering remains Italian, with English keys immediately below each figure; standalone image files are not included.
+Read the complete [English report](milan_housing_report_en.pdf). It retains the historical figures and results. Figure lettering remains Italian, with English keys immediately below each figure; standalone image files are not included.
 
-The reported geographic experiment found that validation MAE generally increased as neighbourhoods were combined into fewer groups, so the report retained the full zone representation. Repeated backward selection produced different predictor sets across random splits. The report also acknowledges that reusing observations for candidate selection and evaluation, and choosing the lowest observed MAE, biases the resulting estimate.
+## Report summary
 
-The code keeps quantile regression central. Random-forest, XGBoost, CatBoost and residual-correction configurations are separate experiments; no leaderboard score or winning model is attributed to them.
+The report begins with cleaning inconsistent listing fields and imputing missing values using ordinal, linear and logistic regression, together with mean and category replacements. It constructs predictors for inverse floor area, construction after 2010, parking spaces, floor characteristics, lift availability and other property features. Neighbourhoods were geocoded and corrected in QGIS, and zones with very few training observations were combined with nearby zones.
+
+The main model is median quantile regression on `log(selling_price / square_meters)`. Predictions return to selling prices through `exp(prediction) * square_meters`, and model comparisons use absolute errors on that price scale. A geographic experiment combined neighbourhoods using k-means on their coordinates. Validation MAE generally increased as the number of zone groups decreased, so the report retained the full zone representation for subsequent analysis.
+
+Backward selection produced different predictor sets across random training and validation splits. The report compares 50 candidate models over another 50 splits and describes selecting a model with the lowest observed MAE and an acceptable variance. It also acknowledges that reusing observations for selection and evaluation, and choosing the minimum observed MAE, biases the estimate; the reported comparison is not an independent validation result.
 
 ## Code and requirements
 
-`R/` defines preprocessing, zone handling, stratified splits, fitting, selection, prediction and optional tree-model functions. `scripts/` contains the explicit analysis entry points. `config/` contains the consolidated recoding rules, a starting quantile formula and named tree configurations. `report/` contains the two PDFs and the clean English LaTeX source. [Methods](docs/methods.md) describes fields, transformations and evaluation.
+`R/` defines preprocessing, zone handling, stratified splits, fitting, selection, prediction and optional tree-model functions. `scripts/` contains the explicit analysis entry points. `config/` contains the consolidated recoding rules, a starting quantile formula and named tree configurations. The English report PDF is in the repository root. [Methods](docs/methods.md) describes fields, transformations and evaluation.
 
-The main R path requires **MASS** and **quantreg**, in addition to base R. Optional trees require **xgboost**, **ranger** or **catboost**; tuning additionally uses **mlr**, **mlrMBO** and **ParamHelpers**. Earlier experiments reference **rqPen**, **ggmap** and **tidygeocoder**. These optional packages are unnecessary for the quantile workflow or report build. [r-dependencies.dcf](r-dependencies.dcf) records this division without claiming historically tested package versions.
+Quantile regression is the main workflow. Random-forest, XGBoost, CatBoost and residual-correction configurations are separate experiments; no leaderboard score or winning model is attributed to them.
+
+The main R path requires **MASS** and **quantreg**, in addition to base R. Optional trees require **xgboost**, **ranger** or **catboost**; tuning additionally uses **mlr**, **mlrMBO** and **ParamHelpers**. Earlier experiments reference **rqPen**, **ggmap** and **tidygeocoder**. These optional packages are unnecessary for the quantile workflow. [r-dependencies.dcf](r-dependencies.dcf) records this division without claiming historically tested package versions.
 
 Supply UTF-8 comma-delimited `training.csv` with labelled listings and `test.csv` with the same predictor fields and explicit `ID` values. Raw listing data are not included. The optional geographic comparison also requires the zone-level `loc.txt` table with `Zone,Train_Count,Test_Count,lon,lat`; it is not a replacement for listing data. An external read-only directory can be passed through `--input-root`.
 
@@ -42,13 +48,3 @@ Rscript --vanilla scripts/fit_tree_model.R --input-root data --input training.cs
 ```
 
 Cluster counts are example future choices. Tree bundles can be passed to the same prediction script. All output paths must be relative to this project. Fitted bundles retain preprocessing statistics, imputation models, feature vocabulary, factor levels, target transformation and the fitted model. Predictions contain `ID,prediction` in the requested test order; no models, new predictions or selection traces are included.
-
-## Building the English report
-
-The Windows PowerShell build script uses an installed MiKTeX `pdflatex` engine, `pdfimages` and an existing `pdflatex.fmt`. It extracts only the three historical figure images from the Italian PDF into local build storage, then compiles the English source with package installation and shell escape disabled. It requires no R packages and performs no statistical analysis.
-
-```powershell
-powershell -NoProfile -File scripts/build_report.ps1
-```
-
-Build intermediates and extracted images are written to `.build/report/`; the completed PDF is written to `report/milan_housing_report_en.pdf`. The script accepts `-FormatFile` if the installed format is in a different location.
